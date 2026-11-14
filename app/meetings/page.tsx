@@ -1,11 +1,9 @@
-
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { connection } from 'next/server';
-import { headers } from 'next/headers';
 
 import MeetingCard from '@/components/MeetingCard';
 import type { SacramentMeeting } from '@/lib/types';
+import { getBaseUrl } from '@/lib/get-base-url';
 
 export const metadata: Metadata = {
     title: 'All Meetings | Sacrament Meeting Planner',
@@ -16,21 +14,8 @@ export const metadata: Metadata = {
 async function MeetingsList() {
     await connection();
 
-    const headersList = await headers();
-
-    const host =
-        headersList.get('x-forwarded-host') ??
-        headersList.get('host');
-
-    const protocol =
-        headersList.get('x-forwarded-proto') ?? 'http';
-
-    if (!host) {
-        throw new Error('Unable to determine application URL.');
-    }
-
     const response = await fetch(
-        `${protocol}://${host}/api/meetings`,
+        `${await getBaseUrl()}/api/meetings`,
         {
             cache: 'no-store',
         }
@@ -79,18 +64,7 @@ export default function MeetingsPage() {
                 </p>
             </header>
 
-            <Suspense
-                fallback={
-                    <p
-                        className="text-stone-600"
-                        role="status"
-                    >
-                        Loading meetings...
-                    </p>
-                }
-            >
-                <MeetingsList />
-            </Suspense>
+            <MeetingsList />
         </div>
     );
 }

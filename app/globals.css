@@ -7,6 +7,13 @@
   --secondary: #fef3c7;
 }
 
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+}
+
 html {
   scroll-behavior: smooth;
 }

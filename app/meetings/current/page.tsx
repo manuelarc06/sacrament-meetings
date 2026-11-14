@@ -1,23 +1,46 @@
+
 import { redirect } from 'next/navigation';
 import { connection } from 'next/server';
 
 import { getMeetings } from '@/lib/meetings-db';
 
+// Allow the route to resolve its dynamic data before responding.
+export const instant = false;
+
 export default async function CurrentMeetingPage() {
+    // Wait for an incoming request before reading the current date.
     await connection();
 
-    const today = new Date();
+    const now = new Date();
 
-    const dayOfWeek = today.getDay();
+    const colombiaDate = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Bogota',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    }).formatToParts(now);
 
-    const sunday = new Date(today);
+    const year = Number(
+        colombiaDate.find((part) => part.type === 'year')?.value
+    );
 
-    sunday.setDate(today.getDate() - dayOfWeek);
+    const month = Number(
+        colombiaDate.find((part) => part.type === 'month')?.value
+    );
+
+    const day = Number(
+        colombiaDate.find((part) => part.type === 'day')?.value
+    );
+
+    const today = new Date(Date.UTC(year, month - 1, day));
+    const dayOfWeek = today.getUTCDay();
+
+    today.setUTCDate(today.getUTCDate() - dayOfWeek);
 
     const sundayDate = [
-        sunday.getFullYear(),
-        String(sunday.getMonth() + 1).padStart(2, '0'),
-        String(sunday.getDate()).padStart(2, '0'),
+        today.getUTCFullYear(),
+        String(today.getUTCMonth() + 1).padStart(2, '0'),
+        String(today.getUTCDate()).padStart(2, '0'),
     ].join('-');
 
     const meetings = getMeetings(sundayDate);

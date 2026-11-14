@@ -1,24 +1,15 @@
+
 import Link from 'next/link';
 import type { SacramentMeeting } from '@/lib/types';
+import { formatMeetingDate, meetingTypeLabels } from '@/lib/format';
 
 interface MeetingCardProps {
     meeting: SacramentMeeting;
 }
 
-export default function MeetingCard({ meeting, }: MeetingCardProps) {
-    const formattedDate = new Date(`${meeting.date}T12:00:00`).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
-
-    const meetingType = {
-        testimony: 'Testimony Meeting',
-        regular: 'Regular Meeting',
-        stake: 'Stake Meeting',
-        general: 'General Meeting',
-    }[meeting.meetingType];
+export default function MeetingCard({ meeting }: MeetingCardProps) {
+    const formattedDate = formatMeetingDate(meeting.date);
+    const meetingType = meetingTypeLabels[meeting.meetingType];
 
     return (
         <article className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
@@ -60,3 +51,4 @@ export default function MeetingCard({ meeting, }: MeetingCardProps) {
         </article>
     );
 }
+

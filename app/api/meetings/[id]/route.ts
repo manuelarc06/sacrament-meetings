@@ -5,7 +5,7 @@ interface RouteContext {
 }
 
 export async function GET(
-    request: Request,
+    _request: Request,
     { params }: RouteContext
 ) {
     const { id } = await params;
