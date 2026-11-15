@@ -43,7 +43,7 @@ export default async function CurrentMeetingPage() {
         String(today.getUTCDate()).padStart(2, '0'),
     ].join('-');
 
-    const meetings = getMeetings(sundayDate);
+    const meetings = await getMeetings('', 1, sundayDate);
 
     if (meetings.length === 0) {
         redirect('/meetings');
